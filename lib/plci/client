@@ -1,0 +1,12 @@
+: <<'=cut'
+
+=head1 PLCI (Perl Continuous Intregration) client
+
+(see C<perldoc plci/server> for more informations)
+
+=cut
+
+export PLCI_USER=${PLCI_USER-perlci}
+plci        () { sudo -u $PLCI_USER -i "$@" }
+plci/t      () { pci plci/dist/test <*gz  }
+plci/clean  () { pci zsh <<< "rm -rf build*" }

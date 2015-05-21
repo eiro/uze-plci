@@ -1,0 +1,62 @@
+: <<'=cut'
+
+=encoding utf8
+
+=head1 PLCI (Perl Continuous Intregration)
+
+is a very simple way to test modules locally. It is based
+on a C<$PLCI_USER> you can sudo as to test installation of
+modules on a fresh perlbrew env. 
+
+
+=head1 Install a server
+
+=head2 Dependencies
+
+=over 4
+
+=item *
+
+a system perl, local::lib and perlbrew 
+
+=item * 
+
+an account you can sudo as and zsh as default shell
+
+=back
+
+=head2 getting perlbrew ready
+
+    perlbrew init
+    perlbrew available # what are the available perl version
+    perlbrew install perl-5.20.0 # pick one
+    source ~/perl5/perlbrew/etc/bashrc
+    curl -L https://cpanmin.us | perl - App::cpanminus
+    mkdir uze
+    cd uze
+    git clone https://github.com/eiro/uze-plci.git plci
+    git clone https://github.com/eiro/uze.git uze
+
+
+=head2 C<.zshenv>
+
+this is an example
+
+    setopt extendedglob pathdirs
+    source ~/perl5/perlbrew/etc/bashrc
+    . ~/uze/uze
+    uze plci/server
+
+=cut
+
+plci/dist/test () {
+	local bdir=$( mktemp -d build-$(date +%F-%s )-XXXX )
+	eval $( /usr/bin/perl -Mlocal::lib=$bdir )
+	cd $bdir
+	tar xz
+        cd *
+	cpanm --installdeps . 
+	perl Makefile.PL && make test
+}
+
+
